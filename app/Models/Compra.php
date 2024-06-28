@@ -16,6 +16,19 @@ class Compra extends Model
         'Fecha_de_compra',
         'precio',
         'cantidad',
+        'total',
         'descuento'
     ];
+
+    // Relación muchos a uno con la tabla de proveedores
+    public function proveedor()
+    {
+        return $this->belongsTo(Proveedor::class, 'id_proveedor', 'id');
+    }
+
+    // Relación muchos a uno con la tabla de productos
+    public function producto()
+    {
+        return $this->belongsTo(Producto::class, 'id_producto', 'id');
+    }
 }

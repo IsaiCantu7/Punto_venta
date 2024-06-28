@@ -20,4 +20,10 @@ class Cliente extends Model
         'Codigo_postal',
         'Regimen_fiscal'
     ];
+
+    public function cotizaciones()
+    {
+    return $this->hasMany(Cotizacion::class, 'id_cliente');
+
+    }
 }

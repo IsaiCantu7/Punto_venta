@@ -13,6 +13,13 @@
                 <p>{{ $message }}</p>
             </div>
         @endif
+
+        {{-- Mostrar errores --}}
+        @if ($error = Session::get('error'))
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 my-4" role="alert">
+                <p>{{ $error }}</p>
+            </div>
+        @endif
     
         <table class="min-w-full bg-white border border-gray-200">
             <thead>

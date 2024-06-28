@@ -26,4 +26,16 @@ class Producto extends Model
     {
         return $this->belongsTo(Categoria::class, 'categoria_id');
     }
+    public function cotizaciones()
+{
+    return $this->belongsToMany(Cotizacion::class, 'cotizacion_producto', 'producto_id', 'cotizacion_id')
+        ->withTimestamps();
+}
+
+public function compras()
+{
+    return $this->belongsToMany(Compra::class, 'compra_producto', 'producto_id', 'compra_id')
+        ->withPivot('cantidad', 'precio', 'total', 'descuento')
+        ->withTimestamps();
+}
 }

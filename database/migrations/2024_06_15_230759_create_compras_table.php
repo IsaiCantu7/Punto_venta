@@ -15,6 +15,7 @@ return new class extends Migration
             $table->date('Fecha_de_compra');
             $table->decimal('precio', 8, 2);
             $table->integer('cantidad');
+            $table->decimal('total', 8, 2);
             $table->decimal('descuento', 8, 2);
             $table->timestamps();
         });

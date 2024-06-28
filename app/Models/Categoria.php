@@ -20,4 +20,16 @@ class Categoria extends Model
         return $this->belongsTo(Categoria::class, 'id'); // Relación de uno a muchos
     }
 
+    // Relación con los productos
+    public function productos()
+    {
+        return $this->hasMany(Producto::class, 'categoria_id'); // Relación de uno a muchos
+    }
+
+    // Relación con el inventario
+    public function inventario()
+    {
+        return $this->hasMany(Inventario::class, 'categoria_id'); // Relación de uno a muchos
+    }
+
 }

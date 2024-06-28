@@ -40,13 +40,28 @@
                         {{ __('Proveedores') }}
                     </x-nav-link>
 
-                    <!-- <x-nav-link :href="route('ventas.index')" :active="request()->routeIs('ventas.*')">
-                        {{ __('Ventas') }}
+                    <x-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')">
+                        {{ __('Clientes') }}
+                    </x-nav-link>
+
+                    <!-- <x-nav-link :href="route('vendedores.index')" :active="request()->routeIs('vendedores.*')">
+                        {{ __('Vendedores') }}
                     </x-nav-link> -->
+
+
                     <x-nav-link :href="route('inventarios.index')" :active="request()->routeIs('inventarios.*')">
                         {{ __('Inventarios') }}
                     </x-nav-link>
-                    <!-- Agrega más enlaces aquí según tus necesidades -->
+
+                    <x-nav-link :href="route('compras.index')" :active="request()->routeIs('compras.*')">
+                        {{ __('Compras') }}
+                    </x-nav-link> 
+
+<!--                     
+                    <x-nav-link :href="route('cotizaciones.index')" :active="request()->routeIs('cotizaciones.*')">
+                        {{ __('Cotizacion') }}
+                    </x-nav-link>  -->
+
                 </div>
             </nav>
         </div>

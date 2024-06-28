@@ -17,4 +17,10 @@ class Proveedor extends Model
         'correo',
         'telefono'
     ];
+
+    // Relación uno a muchos con la tabla de compras
+    public function compras()
+    {
+        return $this->hasMany(Compra::class, 'id_proveedor', 'id');
+    }
 }

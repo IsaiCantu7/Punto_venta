@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use App\Models\Categoria;
+use App\Models\Inventario;
 use Illuminate\Http\Request;
 
 class ProductoController extends Controller
@@ -98,9 +99,18 @@ class ProductoController extends Controller
      */
     public function destroy(Producto $producto)
     {
-        // Eliminar el producto
+        // Verificar si hay inventario asociado al producto
+        $inventario = Inventario::where('producto_id', $producto->id)->exists();
+    
+        if ($inventario) {
+            // Si hay inventario asociado, redireccionar con un mensaje de error
+            return redirect()->route('productos.index')
+                             ->with('error', 'No se puede eliminar el producto porque tiene inventario asociado.');
+        }
+    
+        // Si no hay inventario asociado, proceder con la eliminación del producto
         $producto->delete();
-
+    
         // Redireccionar a la lista de productos con un mensaje de éxito
         return redirect()->route('productos.index')
                         ->with('success', 'Producto eliminado exitosamente.');

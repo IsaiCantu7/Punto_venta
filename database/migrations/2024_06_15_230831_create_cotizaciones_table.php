@@ -10,12 +10,14 @@ return new class extends Migration
     {
         Schema::create('cotizaciones', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_producto');
             $table->unsignedBigInteger('id_cliente');
+            $table->unsignedBigInteger('id_vendedor');
             $table->date('fecha_cot');
-            $table->date('Vigencia');
-            $table->decimal('precio', 8, 2);
-            $table->text('comentarios');
+            $table->date('vigencia');
+            $table->decimal('subtotal', 10, 2); // Nuevo campo para subtotal
+            $table->decimal('iva', 10, 2); // Nuevo campo para IVA
+            $table->decimal('total', 10, 2); // Nuevo campo para total
+            $table->text('comentarios')->nullable();
             $table->timestamps();
         });
     }

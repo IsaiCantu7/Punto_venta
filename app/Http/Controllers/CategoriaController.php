@@ -2,6 +2,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categoria;
+use App\Models\Producto;
+use App\Models\Inventario;
 use Illuminate\Http\Request;
 
 class CategoriaController extends Controller
@@ -80,11 +82,31 @@ class CategoriaController extends Controller
      */
     public function destroy(Categoria $categoria)
     {
-        // Eliminar la categoría
+        // Verificar si hay productos asociados a esta categoría
+        $productos = Producto::where('categoria_id', $categoria->id)->exists();
+    
+        if ($productos) {
+            // Si hay productos asociados, redireccionar con un mensaje de error
+            return redirect()->route('categorias.index')
+                             ->with('error', 'No se puede eliminar la categoría porque está asociada a productos.');
+        }
+    
+        // Verificar si hay inventario asociado a productos de esta categoría
+        $productos_ids = Producto::where('categoria_id', $categoria->id)->pluck('id')->toArray();
+        $inventario = Inventario::whereIn('producto_id', $productos_ids)->exists();
+    
+        if ($inventario) {
+            // Si hay inventario asociado, redireccionar con un mensaje de error
+            return redirect()->route('categorias.index')
+                             ->with('error', 'No se puede eliminar la categoría porque tiene productos con inventario asociado.');
+        }
+    
+        // Si no hay productos ni inventario asociado, proceder con la eliminación de la categoría
         $categoria->delete();
-
+    
         // Redireccionar a la lista de categorías con un mensaje de éxito
         return redirect()->route('categorias.index')
                          ->with('success', 'Categoría eliminada exitosamente.');
     }
+    
 }

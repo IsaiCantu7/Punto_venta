@@ -15,4 +15,8 @@ class Vendedor extends Model
         'correo',
         'telefono'
     ];
+
+    public function cotizaciones() {
+        return $this->hasMany(Cotizacion::class, 'id_vendedor');
+    }
 }
