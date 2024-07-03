@@ -48,13 +48,16 @@ Route::middleware('auth')->group(function () {
     Route::resource('proveedores', ProveedorController::class);
 
     // Forma de Pago
-    Route::resource('forma-pago', FormaDePagoController::class);
+    Route::resource('forma_pago', FormaDePagoController::class);
 
     // Vendedores
     Route::resource('vendedores', VendedorController::class);
 
     // Cotizaciones
     Route::resource('cotizaciones', CotizacionController::class);
+
+    Route::get('compras/{compra}/pdf', [CompraController::class, 'exportPdf'])->name('compras.pdf');
+
 });
 
 require __DIR__.'/auth.php';

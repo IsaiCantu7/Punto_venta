@@ -14,6 +14,7 @@ return new class extends Migration
             $table->unsignedBigInteger('categoria_id');
             $table->date('fecha_de_entrada')->nullable();
             $table->date('fecha_de_salida')->nullable();
+            $table->string('motivo')->nullable();
             $table->string('movimiento');
             $table->integer('cantidad');
             $table->timestamps();

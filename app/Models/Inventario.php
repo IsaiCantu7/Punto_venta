@@ -15,6 +15,7 @@ class Inventario extends Model
         'categoria_id',
         'fecha_de_entrada',
         'fecha_de_salida',
+        'motivo',
         'movimiento',
         'cantidad'
     ];

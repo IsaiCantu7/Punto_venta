@@ -142,7 +142,7 @@ public function store(Request $request)
         // Buscar la cotización a eliminar
         $cotizacion = Cotizacion::findOrFail($id);
 
-        // Eliminar la relación con los productos en la tabla pivote
+        // Eliminar la relación con los productos en la tabla 
         $cotizacion->productos()->detach();
 
         // Eliminar la cotización
