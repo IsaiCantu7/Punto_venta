@@ -86,7 +86,7 @@ class VentaController extends Controller
                         ]);
     
                         // Debugging message
-                        Log::info("Producto {$producto_id} adjuntado a la venta {$venta->id} con cantidad {$cantidad} y precio unitario {$precio_unitario}");
+                        \Log::info("Producto {$producto_id} adjuntado a la venta {$venta->id} con cantidad {$cantidad} y precio unitario {$precio_unitario}");
                     } else {
                         throw new \Exception("No hay suficiente stock para el producto {$producto->nombre}.");
                     }
@@ -99,7 +99,7 @@ class VentaController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             // Logging the error
-            Log::error('Error al crear la venta: ' . $e->getMessage());
+            \Log::error('Error al crear la venta: ' . $e->getMessage());
             return redirect()->back()->withInput()->with('error', 'Error al crear la venta: ' . $e->getMessage());
         }
     }

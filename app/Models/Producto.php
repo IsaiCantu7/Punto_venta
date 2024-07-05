@@ -44,4 +44,10 @@ public function ventas()
     return $this->belongsToMany(Venta::class, 'venta_producto')
                 ->withPivot('cantidad', 'precio_unitario');
 }
+
+public function inventarios()
+{
+    return $this->hasMany(Inventario::class, 'producto_id');
+
+}
 }

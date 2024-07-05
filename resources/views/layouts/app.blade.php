@@ -44,9 +44,9 @@
                         {{ __('Clientes') }}
                     </x-nav-link>
 
-                    <!-- <x-nav-link :href="route('vendedores.index')" :active="request()->routeIs('vendedores.*')">
+                    <x-nav-link :href="route('vendedores.index')" :active="request()->routeIs('vendedores.*')">
                         {{ __('Vendedores') }}
-                    </x-nav-link> -->
+                    </x-nav-link>
 
 
                     <x-nav-link :href="route('inventarios.index')" :active="request()->routeIs('inventarios.*')">
