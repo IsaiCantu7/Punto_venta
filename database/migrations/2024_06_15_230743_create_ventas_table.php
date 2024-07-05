@@ -4,23 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateVentasTable extends Migration
 {
     public function up()
     {
         Schema::create('ventas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_vendedor');
-            $table->unsignedBigInteger('Id_producto');
-            $table->unsignedBigInteger('id_cat');
-            $table->unsignedBigInteger('id_cliente');
-            $table->unsignedBigInteger('id_pago');
+            $table->unsignedBigInteger('cliente_id');
             $table->date('Fecha_de_venta');
-            $table->string('motivo');
-            $table->decimal('Cambio', 8, 2);
-            $table->decimal('Subtotal', 8, 2);
-            $table->decimal('IVA', 8, 2);
-            $table->decimal('Total', 8, 2);
+            $table->decimal('precio_total', 8, 2)->nullable();
+            $table->decimal('iva', 8, 2);
+            $table->decimal('descuento', 8, 2)->default(0);
+            $table->decimal('efectivo', 8, 2);
+            $table->decimal('cambio', 8, 2);
             $table->timestamps();
         });
     }
@@ -29,4 +25,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('ventas');
     }
-};
+}

@@ -16,6 +16,7 @@
                         <th class="border border-gray-200 px-2 py-2">Categoría</th>
                         <th class="border border-gray-200 px-2 py-2">Fecha de Entrada</th>
                         <th class="border border-gray-200 px-2 py-2">Fecha de Salida</th>
+                        <th class="border border-gray-200 px-2 py-2">Motivo</th>
                         <th class="border border-gray-200 px-2 py-2">Movimiento</th>
                         <th class="border border-gray-200 px-2 py-2">Cantidad</th>
                         <th class="border border-gray-200 px-2 py-2">Acciones</th>
@@ -28,6 +29,7 @@
                             <td class="border border-gray-200 px-2 py-2">{{ $inventario->producto->categoria->nombre }}</td>
                             <td class="border border-gray-200 px-2 py-2">{{ $inventario->fecha_de_entrada }}</td>
                             <td class="border border-gray-200 px-2 py-2">{{ $inventario->fecha_de_salida }}</td>
+                            <td class="border border-gray-200 px-2 py-2">{{ $inventario->motivo }}</td>
                             <td class="border border-gray-200 px-2 py-2">{{ $inventario->movimiento }}</td>
                             <td class="border border-gray-200 px-2 py-2">{{ $inventario->cantidad }}</td>
                             <td class="py-2 px-2 text-center">

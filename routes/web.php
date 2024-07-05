@@ -34,6 +34,8 @@ Route::middleware('auth')->group(function () {
 
     // Ventas
     Route::resource('ventas', VentaController::class);
+    Route::get('ventas/{compra}/pdf', [VentaController::class, 'exportPdf'])->name('ventas.pdf');
+
 
     // Inventarios
     Route::resource('inventarios', InventarioController::class);
@@ -48,16 +50,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('proveedores', ProveedorController::class);
 
     // Forma de Pago
-    Route::resource('forma_pago', FormaDePagoController::class);
+    Route::resource('forma-pago', FormaDePagoController::class);
 
     // Vendedores
     Route::resource('vendedores', VendedorController::class);
 
     // Cotizaciones
     Route::resource('cotizaciones', CotizacionController::class);
-
-    Route::get('compras/{compra}/pdf', [CompraController::class, 'exportPdf'])->name('compras.pdf');
-
 });
 
 require __DIR__.'/auth.php';

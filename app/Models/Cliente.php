@@ -26,4 +26,12 @@ class Cliente extends Model
     return $this->hasMany(Cotizacion::class, 'id_cliente');
 
     }
+
+        /**
+     * Obtener las ventas realizadas por el cliente.
+     */
+    public function ventas()
+    {
+        return $this->hasMany(Venta::class);
+    }
 }

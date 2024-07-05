@@ -8,7 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class FormaDePago extends Model
 {
     use HasFactory;
-
+    // Definir la tabla de la base de datos
     protected $table = 'forma_de_pago';
-    protected $fillable = ['tipo'];
+    // Definir los campos que se pueden llenar
+    protected $fillable = [
+        'tipo'
+    ];
 }

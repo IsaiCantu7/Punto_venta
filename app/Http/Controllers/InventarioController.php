@@ -39,7 +39,7 @@ class InventarioController extends Controller
             'categoria_id' => 'required',
             'fecha_de_entrada' => 'nullable|date',
             'fecha_de_salida' => 'nullable|date',
-            'motivo' => 'nullable|string',
+            'motivo' => 'required|string',
             'movimiento' => 'required|string',
             'cantidad' => 'required|integer',
         ]);
@@ -83,7 +83,6 @@ class InventarioController extends Controller
             'categoria_id' => 'required',
             'fecha_de_entrada' => 'nullable|date',
             'fecha_de_salida' => 'nullable|date',
-            'motivo' => 'nullable|string',
             'movimiento' => 'required|string',
             'cantidad' => 'required|integer',
         ]);
