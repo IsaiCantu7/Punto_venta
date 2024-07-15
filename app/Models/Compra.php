@@ -27,8 +27,10 @@ class Compra extends Model
     }
 
     // Relación muchos a uno con la tabla de productos
-    public function producto()
+    public function productos()
     {
-        return $this->belongsTo(Producto::class, 'id_producto', 'id');
+        return $this->belongsToMany(Producto::class, 'compra_producto')
+                    ->withPivot('cantidad', 'precio')
+                    ->withTimestamps();
     }
 }

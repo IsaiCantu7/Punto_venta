@@ -35,48 +35,48 @@ class CompraController extends Controller
      */
     public function store(Request $request)
     {
-        // Validar y almacenar la nueva compra
-        $request->validate([
-            'id_proveedor' => 'required|exists:proveedores,id',
-            'id_producto' => 'required|exists:productos,id',
-            'Fecha_de_compra' => 'required|date',
-            'precio' => 'required|numeric',
-            'cantidad' => 'required|integer',
-            'total' => 'required|numeric',
-            'descuento' => 'nullable|numeric',
-        ]);
+        // Crear la compra
+        $compra = Compra::create($request->only('id_proveedor', 'Fecha_de_compra', 'total', 'descuento'));
     
-        // Crear una nueva compra con los datos validados
-        $compra = Compra::create($request->all());
+        foreach ($request->productos as $producto_id => $details) {
+            $cantidad = $details['cantidad'];
+            $precio = $details['precio'];
     
-        // Ajustar la cantidad del producto en el inventario
-        $producto_id = $request->id_producto;
-        $cantidad = $request->cantidad;
+            // Solo procesar si la cantidad es mayor que 0
+            if ($cantidad > 0) {
+                $producto = Producto::find($producto_id);
+                $categoria_id = $producto->categoria_id;
     
-        $producto = Producto::find($producto_id);
-        $categoria_id = $producto->categoria_id; // Obtener la categoría del producto
+                // Verificar si el producto ya está en el inventario
+                $inventario = Inventario::where('producto_id', $producto_id)->first();
     
-        $inventario = Inventario::where('producto_id', $producto_id)->first();
+                if ($inventario) {
+                    // Si hay registro, sumar la cantidad
+                    $inventario->cantidad += $cantidad;
+                    $inventario->save();
+                } else {
+                    // Si no hay registro, crear uno nuevo
+                    Inventario::create([
+                        'producto_id' => $producto_id,
+                        'cantidad' => $cantidad,
+                        'categoria_id' => $categoria_id,
+                        'movimiento' => 'Compra'
+                    ]);
+                }
     
-        if ($inventario) {
-            // Si ya existe un inventario para el producto, aumentar la cantidad
-            $inventario->cantidad += $cantidad;
-        } else {
-            // Si no existe inventario para el producto, crear uno nuevo
-            $inventario = new Inventario();
-            $inventario->producto_id = $producto_id;
-            $inventario->cantidad = $cantidad;
-            $inventario->fecha_de_entrada = now();
-            $inventario->movimiento = 'Compra';
-            $inventario->categoria_id = $categoria_id; // Asignar la categoría del producto
+                // Asociar el producto a la compra
+                $compra->productos()->attach($producto_id, [
+                    'cantidad' => $cantidad,
+                    'precio' => $precio
+                ]);
+            }
         }
     
-        $inventario->save();
-    
-        // Redireccionar a la lista de compras con un mensaje de éxito
-        return redirect()->route('compras.index')
-                         ->with('success', 'Compra creada exitosamente.');
+        return redirect()->route('compras.index')->with('success', 'Compra creada exitosamente.');
     }
+    
+    
+    
     
 
     /**
@@ -100,26 +100,59 @@ class CompraController extends Controller
     /**
      * Actualizar la compra especificada en el almacenamiento.
      */
-    public function update(Request $request, Compra $compra)
+    public function update(Request $request, $id)
     {
-        // Validar y actualizar la compra existente
-        $request->validate([
-            'id_proveedor' => 'required|exists:proveedores,id',
-            'id_producto' => 'required|exists:productos,id',
-            'Fecha_de_compra' => 'required|date',
-            'precio' => 'required|numeric',
-            'cantidad' => 'required|integer',
-            'total' => 'required|numeric',
-            'descuento' => 'nullable|numeric',
-        ]);
-
-        // Actualizar la compra con los datos validados
-        $compra->update($request->all());
-
-        // Redireccionar a la lista de compras con un mensaje de éxito
-        return redirect()->route('compras.index')
-                         ->with('success', 'Compra actualizada exitosamente.');
+        $compra = Compra::findOrFail($id);
+        $compra->update($request->only('id_proveedor', 'Fecha_de_compra', 'total', 'descuento'));
+    
+        // Obtener los productos existentes en la compra
+        $productosAntiguos = $compra->productos()->pluck('producto_id')->toArray();
+    
+        // Procesar productos nuevos
+        foreach ($request->productos as $producto_id => $details) {
+            $cantidad = $details['cantidad'];
+            $precio = $details['precio'];
+            $producto = Producto::find($producto_id);
+            $categoria_id = $producto->categoria_id;
+    
+            // Verificar si el producto ya está en el inventario
+            $inventario = Inventario::where('producto_id', $producto_id)->first();
+    
+            if ($inventario) {
+                // Si hay registro, establecer la cantidad a la nueva cantidad
+                $inventario->cantidad = $cantidad;
+                $inventario->save();
+            } else {
+                // Si no hay registro, crear uno nuevo
+                Inventario::create([
+                    'producto_id' => $producto_id,
+                    'cantidad' => $cantidad,
+                    'categoria_id' => $categoria_id,
+                    'movimiento' => 'Compra'
+                ]);
+            }
+    
+            // Asociar el producto a la compra (actualizar o añadir)
+            $compra->productos()->updateExistingPivot($producto_id, [
+                'cantidad' => $cantidad,
+                'precio' => $precio
+            ]);
+        }
+    
+        // Eliminar productos que ya no están en la compra
+        foreach ($productosAntiguos as $producto_id) {
+            if (!isset($request->productos[$producto_id])) {
+                $inventario = Inventario::where('producto_id', $producto_id)->first();
+                // Si el producto fue eliminado, se puede manejar aquí si es necesario
+                // Por ejemplo, puedes decidir restar la cantidad anterior o simplemente desasociar
+                $compra->productos()->detach($producto_id);
+            }
+        }
+    
+        return redirect()->route('compras.index')->with('success', 'Compra actualizada exitosamente.');
     }
+    
+    
 
     /**
      * Eliminar la compra especificada del almacenamiento.

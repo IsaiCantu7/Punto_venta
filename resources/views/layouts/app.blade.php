@@ -57,10 +57,10 @@
                         {{ __('Compras') }}
                     </x-nav-link> 
 
-<!--                     
+                    
                     <x-nav-link :href="route('cotizaciones.index')" :active="request()->routeIs('cotizaciones.*')">
                         {{ __('Cotizacion') }}
-                    </x-nav-link>  -->
+                    </x-nav-link> 
 
                     <x-nav-link :href="route('ventas.index')" :active="request()->routeIs('ventas.*')">
                         {{ __('Ventas') }}  

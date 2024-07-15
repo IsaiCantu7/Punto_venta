@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,13 +10,11 @@ return new class extends Migration
         Schema::create('compras', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_proveedor');
-            $table->unsignedBigInteger('id_producto');
             $table->date('Fecha_de_compra');
-            $table->decimal('precio', 8, 2);
-            $table->integer('cantidad');
             $table->decimal('total', 8, 2);
-            $table->decimal('descuento', 8, 2);
+            $table->decimal('descuento', 8, 2)->nullable();
             $table->timestamps();
+
         });
     }
 

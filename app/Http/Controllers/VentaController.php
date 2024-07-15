@@ -86,7 +86,7 @@ class VentaController extends Controller
                         ]);
     
                         // Debugging message
-                        \Log::info("Producto {$producto_id} adjuntado a la venta {$venta->id} con cantidad {$cantidad} y precio unitario {$precio_unitario}");
+                        Log::info("Producto {$producto_id} adjuntado a la venta {$venta->id} con cantidad {$cantidad} y precio unitario {$precio_unitario}");
                     } else {
                         throw new \Exception("No hay suficiente stock para el producto {$producto->nombre}.");
                     }
@@ -99,7 +99,7 @@ class VentaController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             // Logging the error
-            \Log::error('Error al crear la venta: ' . $e->getMessage());
+            Log::error('Error al crear la venta: ' . $e->getMessage());
             return redirect()->back()->withInput()->with('error', 'Error al crear la venta: ' . $e->getMessage());
         }
     }
@@ -216,30 +216,89 @@ class VentaController extends Controller
         }
     }
 
-    public function exportPdf(Venta $venta)
+    public function exportPDF($ventaId)
     {
+        // Obtener la venta por ID
+        $venta = Venta::with('cliente', 'productos')->findOrFail($ventaId);
 
-        // Cargar relaciones productos y cliente
-        $venta->load('productos', 'cliente');
+        // Calcular el subtotal, IVA y total
+        $subtotal = $venta->productos->sum(function($producto) {
+            return $producto->pivot->precio_unitario * $producto->pivot->cantidad;
+        });
+        $iva = $subtotal * 0.16;
+        $total = $subtotal + $iva;
 
-        // Calcular subtotal, IVA y total
-        $total = 0;
-        foreach ($venta->productos as $producto) {
-            $total += $producto->pivot->precio_unitario * $producto->pivot->cantidad;
-        }
-        $iva = $total * 0.16;
-        $subtotal = $total - $iva;
-
-        // Configurar y generar el PDF
+        // Crear nuevo PDF con TCPDF
         $pdf = new TCPDF();
+
+        // Configuración del PDF
+        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetAuthor('Nombre del Autor');
         $pdf->SetTitle('Ticket de Venta');
+        $pdf->SetSubject('Ticket de Venta');
+
+        // Configuración de las páginas
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
         $pdf->AddPage();
 
-        // Agregar contenido al PDF
-        $html = view('ventas.ticket', compact('venta', 'subtotal', 'iva', 'total'))->render();
-        $pdf->writeHTML($html, true, false, true, false, '');
+        // Estilos CSS para el ticket
+        $css = <<<EOD
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+            }
+            .container {
+                width: 100%;
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: #f7f7f7;
+                border: 1px solid #ccc;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+            .header {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            .header h1 {
+                font-size: 24px;
+                font-weight: bold;
+            }
+            .info {
+                margin-bottom: 20px;
+            }
+            .info p {
+                margin: 5px 0;
+            }
+            .products {
+                margin-bottom: 20px;
+            }
+            .products table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            .products th, .products td {
+                border: 1px solid #ccc;
+                padding: 8px;
+            }
+            .products th {
+                background-color: #f0f0f0;
+                text-align: left;
+            }
+            .totals {
+                text-align: right;
+            }
+        </style>
+        EOD;
 
-        // Descargar el PDF
-        $pdf->Output('ticket_venta.pdf', 'D');
+        // Contenido HTML del ticket
+        $html = view('ventas.ticket', compact('venta', 'subtotal', 'iva', 'total'))->render();
+
+        // Escribir el HTML en el PDF
+        $pdf->writeHTML($css . $html, true, false, true, false, '');
+
+        // Salida del PDF
+        $pdf->Output('ticket_de_venta.pdf', 'D');
     }
 }

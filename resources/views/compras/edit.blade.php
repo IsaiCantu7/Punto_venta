@@ -12,22 +12,10 @@
                 <label for="id_proveedor" class="block text-sm font-medium text-gray-700">Proveedor</label>
                 <select name="id_proveedor" id="id_proveedor" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
                     @foreach ($proveedores as $proveedor)
-                        <option value="{{ $proveedor->id }}" {{ $proveedor->id == $compra->id_proveedor ? 'selected' : '' }}>{{ $proveedor->nombre }}</option>
+                        <option value="{{ $proveedor->id }}" {{ $compra->id_proveedor == $proveedor->id ? 'selected' : '' }}>{{ $proveedor->nombre }}</option>
                     @endforeach
                 </select>
                 @error('id_proveedor')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div class="mb-4">
-                <label for="id_producto" class="block text-sm font-medium text-gray-700">Producto</label>
-                <select name="id_producto" id="id_producto" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
-                    @foreach ($productos as $producto)
-                        <option value="{{ $producto->id }}" {{ $producto->id == $compra->id_producto ? 'selected' : '' }}>{{ $producto->nombre }}</option>
-                    @endforeach
-                </select>
-                @error('id_producto')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
@@ -41,24 +29,23 @@
             </div>
 
             <div class="mb-4">
-                <label for="precio" class="block text-sm font-medium text-gray-700">Precio</label>
-                <input type="text" name="precio" id="precio" value="{{ old('precio', $compra->precio) }}" placeholder="Precio del producto" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
-                @error('precio')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div class="mb-4">
-                <label for="cantidad" class="block text-sm font-medium text-gray-700">Cantidad</label>
-                <input type="number" name="cantidad" id="cantidad" value="{{ old('cantidad', $compra->cantidad) }}" placeholder="Cantidad de productos" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
-                @error('cantidad')
+                <label for="productos" class="block text-sm font-medium text-gray-700">Productos</label>
+                @foreach ($productos as $producto)
+                    <div class="flex items-center mb-2">
+                        <input type="checkbox" name="productos[{{ $producto->id }}][id]" value="{{ $producto->id }}" id="producto-{{ $producto->id }}" class="mr-2 producto-checkbox" {{ $compra->productos->contains($producto->id) ? 'checked' : '' }}>
+                        <label for="producto-{{ $producto->id }}" class="mr-2">{{ $producto->nombre }}</label>
+                        <input type="number" name="productos[{{ $producto->id }}][cantidad]" placeholder="Cantidad" value="{{ old('productos.' . $producto->id . '.cantidad', $compra->productos->find($producto->id)->pivot->cantidad ?? '') }}" class="cantidad-input mr-2 block w-20 px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" data-precio="{{ $producto->PV }}" data-id="{{ $producto->id }}">
+                        <input type="number" step="0.01" name="productos[{{ $producto->id }}][precio]" value="{{ $producto->PV }}" placeholder="Precio" readonly class="block w-20 px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-gray-100">
+                    </div>
+                @endforeach
+                @error('productos')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
 
             <div class="mb-4">
                 <label for="total" class="block text-sm font-medium text-gray-700">Total</label>
-                <input type="text" name="total" id="total" value="{{ old('total', $compra->total) }}" placeholder="Total de la compra" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                <input type="text" name="total" id="total" value="{{ old('total', $compra->total) }}" placeholder="Total de la compra" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" readonly>
                 @error('total')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
@@ -78,4 +65,37 @@
             </div>
         </form>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const cantidadInputs = document.querySelectorAll('.cantidad-input');
+            const totalInput = document.getElementById('total');
+            
+            function calculateTotal() {
+                let total = 0;
+                
+                cantidadInputs.forEach(input => {
+                    const checkbox = document.getElementById('producto-' + input.dataset.id);
+                    if (checkbox.checked) {
+                        const cantidad = parseFloat(input.value) || 0;
+                        const precio = parseFloat(input.dataset.precio);
+                        total += cantidad * precio;
+                    }
+                });
+                
+                totalInput.value = total.toFixed(2);
+            }
+
+            cantidadInputs.forEach(input => {
+                input.addEventListener('input', calculateTotal);
+            });
+
+            document.querySelectorAll('.producto-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', calculateTotal);
+            });
+
+            // Calcular total al cargar la página
+            calculateTotal();
+        });
+    </script>
 </x-app-layout>
