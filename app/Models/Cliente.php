@@ -27,6 +27,11 @@ class Cliente extends Model
 
     }
 
+    public function compras()
+    {
+    return $this->hasMany(Compra::class, 'id_cliente');
+    }
+
         /**
      * Obtener las ventas realizadas por el cliente.
      */

@@ -34,6 +34,9 @@
                             <td class="border border-gray-200 px-2 py-2">{{ $inventario->cantidad }}</td>
                             <td class="py-2 px-2 text-center">
                                 <div class="flex item-center justify-center space-x-2">
+                                <a href="{{ route('inventarios.reporte.pdf', $inventario->id) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded inline-block">
+                                    Descargar PDF
+                                </a>
                                     <a href="{{ route('inventarios.show', $inventario->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded inline-block">
                                         Mostrar
                                     </a>

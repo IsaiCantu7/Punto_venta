@@ -33,4 +33,14 @@ class Compra extends Model
                     ->withPivot('cantidad', 'precio')
                     ->withTimestamps();
     }
+
+    public function cliente()
+{
+    return $this->belongsTo(Cliente::class, 'id_cliente'); 
+
+public function vendedor()
+{
+    return $this->belongsTo(Vendedor::class, 'id_vendedor'); 
+}
+
 }

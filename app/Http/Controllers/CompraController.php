@@ -7,6 +7,7 @@ use App\Models\Proveedor;
 use App\Models\Producto;
 use App\Models\Inventario;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CompraController extends Controller
 {
@@ -45,24 +46,10 @@ class CompraController extends Controller
             // Solo procesar si la cantidad es mayor que 0
             if ($cantidad > 0) {
                 $producto = Producto::find($producto_id);
-                $categoria_id = $producto->categoria_id;
     
-                // Verificar si el producto ya está en el inventario
-                $inventario = Inventario::where('producto_id', $producto_id)->first();
-    
-                if ($inventario) {
-                    // Si hay registro, sumar la cantidad
-                    $inventario->cantidad += $cantidad;
-                    $inventario->save();
-                } else {
-                    // Si no hay registro, crear uno nuevo
-                    Inventario::create([
-                        'producto_id' => $producto_id,
-                        'cantidad' => $cantidad,
-                        'categoria_id' => $categoria_id,
-                        'movimiento' => 'Compra'
-                    ]);
-                }
+                // Actualizar la cantidad del producto en la tabla 'productos'
+                $producto->cantidad += $cantidad;
+                $producto->save();
     
                 // Asociar el producto a la compra
                 $compra->productos()->attach($producto_id, [
@@ -78,12 +65,14 @@ class CompraController extends Controller
     
     
     
+    
 
     /**
      * Mostrar la compra especificada.
      */
     public function show(Compra $compra)
     {
+        $compra->load('proveedor', 'productos'); 
         return view('compras.show', compact('compra')); // Retornar la vista de detalle con la compra
     }
 
@@ -110,31 +99,25 @@ class CompraController extends Controller
     
         // Procesar productos nuevos
         foreach ($request->productos as $producto_id => $details) {
-            $cantidad = $details['cantidad'];
+            $nuevaCantidad = $details['cantidad'];
             $precio = $details['precio'];
-            $producto = Producto::find($producto_id);
-            $categoria_id = $producto->categoria_id;
     
-            // Verificar si el producto ya está en el inventario
-            $inventario = Inventario::where('producto_id', $producto_id)->first();
+            // Obtener la cantidad anterior del producto en la compra
+            $cantidadAnteriorPivot = $compra->productos()->find($producto_id)->pivot->cantidad;
     
-            if ($inventario) {
-                // Si hay registro, establecer la cantidad a la nueva cantidad
-                $inventario->cantidad = $cantidad;
-                $inventario->save();
-            } else {
-                // Si no hay registro, crear uno nuevo
-                Inventario::create([
-                    'producto_id' => $producto_id,
-                    'cantidad' => $cantidad,
-                    'categoria_id' => $categoria_id,
-                    'movimiento' => 'Compra'
-                ]);
+            // Verificar si la cantidad nueva es diferente a la cantidad anterior en la compra
+            if ($nuevaCantidad != $cantidadAnteriorPivot) {
+                $diferenciaCantidad = $nuevaCantidad - $cantidadAnteriorPivot;
+    
+                // Actualizar la cantidad del producto sumando la diferencia
+                $producto = Producto::find($producto_id);
+                $producto->cantidad += $diferenciaCantidad;
+                $producto->save();
             }
     
             // Asociar el producto a la compra (actualizar o añadir)
             $compra->productos()->updateExistingPivot($producto_id, [
-                'cantidad' => $cantidad,
+                'cantidad' => $nuevaCantidad,
                 'precio' => $precio
             ]);
         }
@@ -142,9 +125,7 @@ class CompraController extends Controller
         // Eliminar productos que ya no están en la compra
         foreach ($productosAntiguos as $producto_id) {
             if (!isset($request->productos[$producto_id])) {
-                $inventario = Inventario::where('producto_id', $producto_id)->first();
-                // Si el producto fue eliminado, se puede manejar aquí si es necesario
-                // Por ejemplo, puedes decidir restar la cantidad anterior o simplemente desasociar
+                // Si el producto fue eliminado, puedes desasociarlo de la compra
                 $compra->productos()->detach($producto_id);
             }
         }
@@ -152,8 +133,6 @@ class CompraController extends Controller
         return redirect()->route('compras.index')->with('success', 'Compra actualizada exitosamente.');
     }
     
-    
-
     /**
      * Eliminar la compra especificada del almacenamiento.
      */
@@ -166,4 +145,21 @@ class CompraController extends Controller
         return redirect()->route('compras.index')
                          ->with('success', 'Compra eliminada exitosamente.');
     }
+
+    public function generarReportePDFCompra($id)
+    {
+        // Obtener la compra con sus relaciones (proveedor y productos)
+        $compra = Compra::with(['proveedor', 'productos'])->findOrFail($id);
+
+        // Obtener la información del proveedor y productos
+        $proveedor = $compra->proveedor;
+        $productos = $compra->productos;
+
+        // Cargar la vista de reporte en el PDF
+        $pdf = Pdf::loadView('compras.reporte', compact('compra', 'proveedor', 'productos'));
+
+        // Descargar el PDF con el nombre especificado
+        return $pdf->download('reporte_compra_' . $id . '.pdf');
+    }
+
 }

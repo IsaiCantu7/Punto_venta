@@ -11,6 +11,7 @@ use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\FormaDePagoController;
 use App\Http\Controllers\VendedorController;
 use App\Http\Controllers\CotizacionController;
+use App\Http\Controllers\ReporteController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -39,12 +40,16 @@ Route::middleware('auth')->group(function () {
 
     // Inventarios
     Route::resource('inventarios', InventarioController::class);
+    Route::get('inventarios/reporte/pdf/{id}', [InventarioController::class, 'generarReportePDF'])->name('inventarios.reporte.pdf');
+
 
     // Clientes
     Route::resource('clientes', ClienteController::class);
 
     // Compras
     Route::resource('compras', CompraController::class);
+    Route::get('compras/{id}/reporte', [CompraController::class, 'generarReportePDFCompra'])->name('compras.reporte');
+
 
     // Proveedores
     Route::resource('proveedores', ProveedorController::class);
@@ -57,6 +62,14 @@ Route::middleware('auth')->group(function () {
 
     // Cotizaciones
     Route::resource('cotizaciones', CotizacionController::class);
+    Route::get('cotizaciones/{id}/reporte', [CotizacionController::class, 'generarReportePDF'])->name('cotizaciones.reporte.pdf');
+
+    //Reportes
+    Route::resource('reportes', ReporteController::class);
+    Route::post('reportes/generar', [ReporteController::class, 'generar'])->name('reportes.generar');
+    // Rutas para reportes
+    Route::post('/reporte/descargar', [ReporteController::class, 'descargarReporte'])->name('reporte.descargar');
+
 });
 
 require __DIR__.'/auth.php';

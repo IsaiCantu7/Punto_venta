@@ -6,6 +6,7 @@ use App\Models\Producto;
 use App\Models\Categoria;
 use App\Models\Inventario;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class InventarioController extends Controller
 {
@@ -40,17 +41,36 @@ class InventarioController extends Controller
             'fecha_de_entrada' => 'nullable|date',
             'fecha_de_salida' => 'nullable|date',
             'motivo' => 'required|string',
-            'movimiento' => 'required|string',
+            'movimiento' => 'required|string|in:entry,exit',
             'cantidad' => 'required|integer',
         ]);
-
+    
+        // Obtener el producto relacionado
+        $producto = Producto::findOrFail($request->producto_id);
+    
+        // Ajustar la cantidad del producto según el movimiento
+        if ($request->movimiento === 'entry') {
+            $producto->cantidad += $request->cantidad;
+        } elseif ($request->movimiento === 'exit') {
+            $producto->cantidad -= $request->cantidad;
+    
+            // Asegurarse de que la cantidad no sea negativa
+            if ($producto->cantidad < 0) {
+                return redirect()->back()->withErrors(['cantidad' => 'La cantidad no puede ser menor que cero.']);
+            }
+        }
+    
+        // Guardar los cambios en el producto
+        $producto->save();
+    
         // Crear un nuevo registro de inventario con los datos validados
         Inventario::create($request->all());
-
+    
         // Redireccionar a la lista de inventarios con un mensaje de éxito
         return redirect()->route('inventarios.index')
                          ->with('success', 'Movimiento creado exitosamente.');
     }
+    
 
     /**
      * Mostrar el recurso especificado.
@@ -83,18 +103,54 @@ class InventarioController extends Controller
             'categoria_id' => 'required',
             'fecha_de_entrada' => 'nullable|date',
             'fecha_de_salida' => 'nullable|date',
-            'movimiento' => 'required|string',
+            'movimiento' => 'required|string|in:entry,exit',
             'cantidad' => 'required|integer',
         ]);
-
-        // Recuperar el inventario por su ID y actualizarlo con los datos validados
+    
+        // Recuperar el inventario por su ID
         $inventario = Inventario::findOrFail($id);
+    
+        // Obtener el producto relacionado
+        $producto = Producto::findOrFail($request->producto_id);
+    
+        // Obtener el movimiento y la cantidad anteriores
+        $movimientoAnterior = $inventario->movimiento;
+        $cantidadAnterior = $inventario->cantidad;
+    
+    
+        // Verificar si el movimiento actual es diferente al movimiento anterior
+        if ($request->movimiento !== $movimientoAnterior) {
+            // Aplicar ajuste basado en el nuevo movimiento
+            if ($request->movimiento === 'entry') {
+                $producto->cantidad += $request->cantidad;
+            } elseif ($request->movimiento === 'exit') {
+                $producto->cantidad -= $request->cantidad;
+            }
+        } else {
+            // Si el movimiento no ha cambiado, ajustar solo la cantidad
+            if ($request->movimiento === 'entry') {
+                $producto->cantidad += $request->cantidad - $cantidadAnterior;
+            } elseif ($request->movimiento === 'exit') {
+                $producto->cantidad -= $request->cantidad - $cantidadAnterior;
+            }
+        }
+    
+        // Asegurarse de que la cantidad no sea negativa
+        if ($producto->cantidad < 0) {
+            return redirect()->back()->withErrors(['cantidad' => 'La cantidad no puede ser menor que cero.']);
+        }
+    
+        // Guardar los cambios en el producto
+        $producto->save();
+    
+        // Actualizar el inventario con los nuevos datos
         $inventario->update($request->all());
-
+    
         // Redireccionar a la lista de inventarios con un mensaje de éxito
         return redirect()->route('inventarios.index')
                          ->with('success', 'Movimiento actualizado exitosamente.');
     }
+    
 
     /**
      * Eliminar el recurso especificado del almacenamiento.
@@ -109,4 +165,12 @@ class InventarioController extends Controller
         return redirect()->route('inventarios.index')
                          ->with('success', 'Movimiento eliminado exitosamente.');
     }
+    public function generarReportePDF($id)
+    {
+        $inventario = Inventario::findOrFail($id); // Obtener el registro de inventario por su ID
+        $pdf = Pdf::loadView('inventarios.reporte', compact('inventario')); // Cargar la vista de reporte en el PDF con el inventario específico
+        return $pdf->download('reporte_inventario_' . $id . '.pdf'); // Descargar el PDF con el nombre especificado
+    }
+    
+
 }

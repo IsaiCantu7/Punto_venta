@@ -76,8 +76,8 @@ class VentaController extends Controller
                     $inventario = Inventario::where('producto_id', $producto_id)->first();
                     if ($inventario && $inventario->cantidad >= $cantidad) {
                         // Reducir el stock en inventario
-                        $inventario->cantidad -= $cantidad;
-                        $inventario->save();
+                        $producto->cantidad -= $cantidad;
+                        $producto->save();
     
                         // Adjuntar el producto a la venta
                         $venta->productos()->attach($producto_id, [

@@ -16,6 +16,7 @@ class Producto extends Model
         'PV',
         'PC',
         'Fecha_de_compra',
+        'cantidad',
         'Color(es)',
         'descripcion_corta',
         'descripcion_larga'
@@ -26,11 +27,13 @@ class Producto extends Model
     {
         return $this->belongsTo(Categoria::class, 'categoria_id');
     }
+
     public function cotizaciones()
-{
-    return $this->belongsToMany(Cotizacion::class, 'cotizacion_producto', 'producto_id', 'cotizacion_id')
-        ->withTimestamps();
-}
+    {
+        return $this->belongsToMany(Cotizacion::class, 'cotizacion_producto', 'producto_id', 'cotizacion_id')
+            ->withPivot('cantidad', 'precio') 
+            ->withTimestamps(); 
+    }
 
 public function compras()
 {

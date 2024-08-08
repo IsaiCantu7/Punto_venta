@@ -38,19 +38,20 @@ class ProductoController extends Controller
             'PV' => 'required|numeric',
             'PC' => 'required|numeric',
             'Fecha_de_compra' => 'required|date',
+            'cantidad' => 'required|numeric',
             'Color(es)' => 'nullable|string',
             'descripcion_corta' => 'nullable|string',
             'descripcion_larga' => 'nullable|string'
         ]);
-
+    
         // Crear un nuevo producto con los datos validados
-        Producto::create($request->all());
-
+        $producto = Producto::create($request->all());
+    
         // Redireccionar a la lista de productos con un mensaje de éxito
         return redirect()->route('productos.index')
                         ->with('success', 'Producto creado exitosamente.');
     }
-
+    
     /**
      * Mostrar el recurso especificado.
      */
@@ -81,18 +82,20 @@ class ProductoController extends Controller
             'PV' => 'required|numeric',
             'PC' => 'required|numeric',
             'Fecha_de_compra' => 'required|date',
+            'cantidad' => 'required|numeric',
             'Color(es)' => 'nullable|string',
             'descripcion_corta' => 'nullable|string',
             'descripcion_larga' => 'nullable|string'
         ]);
-
+    
         // Actualizar el producto con los datos validados
         $producto->update($request->all());
-
+    
         // Redireccionar a la lista de productos con un mensaje de éxito
         return redirect()->route('productos.index')
                         ->with('success', 'Producto actualizado exitosamente.');
     }
+    
 
     /**
      * Eliminar el recurso especificado del almacenamiento.

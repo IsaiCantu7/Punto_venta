@@ -15,7 +15,8 @@ return new class extends Migration
             $table->decimal('PV', 8, 2);
             $table->decimal('PC', 8, 2);
             $table->date('Fecha_de_compra');
-            $table->string('Color(es)');
+            $table->integer('cantidad');
+            $table->string('Color(es)')->nullable();
             $table->text('descripcion_corta');
             $table->text('descripcion_larga');
             $table->timestamps();

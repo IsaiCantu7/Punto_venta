@@ -65,6 +65,7 @@
                     <div class="flex items-center mb-2">
                         <input type="checkbox" name="products[]" value="{{ $producto->id }}" data-price="{{ $producto->PC }}" class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out">
                         <span class="ml-2 text-gray-700">{{ $producto->nombre }} - ${{ number_format($producto->PC, 2) }}</span>
+                        <input type="number" name="cantidad[]" value="1" min="1" class="ml-2 w-16 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
                 @endforeach
                 @error('products')
@@ -95,45 +96,52 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Obtener referencias a los elementos del DOM
-            const productCheckboxes = document.querySelectorAll('input[name="products[]"]');
-            const subtotalInput = document.getElementById('subtotal');
-            const totalIvaInput = document.getElementById('iva');
-            const totalInput = document.getElementById('total');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtener referencias a los elementos del DOM
+        const productCheckboxes = document.querySelectorAll('input[name="products[]"]');
+        const cantidadInputs = document.querySelectorAll('input[name="cantidad[]"]');
+        const subtotalInput = document.getElementById('subtotal');
+        const totalIvaInput = document.getElementById('iva');
+        const totalInput = document.getElementById('total');
 
-            // Función para calcular el subtotal y el total de IVA
-            function calcularSubtotalYTotalIva() {
-                let subtotal = 0;
+        // Función para calcular el subtotal y el total de IVA
+        function calcularSubtotalYTotalIva() {
+            let subtotal = 0;
 
-                // Calcular subtotal sumando el precio de los productos seleccionados
-                productCheckboxes.forEach(function(checkbox) {
-                    if (checkbox.checked) {
-                        const productPrice = parseFloat(checkbox.dataset.price);
-                        subtotal += productPrice; // Asegurar que parseFloat devuelve un número válido
-                    }
-                });
+            // Calcular subtotal sumando el precio de los productos seleccionados multiplicado por la cantidad
+            productCheckboxes.forEach(function(checkbox, index) {
+                if (checkbox.checked) {
+                    const productPrice = parseFloat(checkbox.dataset.price);
+                    const quantity = parseFloat(cantidadInputs[index].value) || 1; // Valor por defecto si la cantidad no está definida
 
-                // Calcular total de IVA (16%)
-                const ivaRate = 0.16;
-                const totalIva = subtotal * ivaRate;
-
-                // Calcular total (subtotal + total de IVA)
-                const total = subtotal + totalIva;
-
-                // Actualizar valores en los inputs
-                subtotalInput.value = subtotal.toFixed(2);
-                totalIvaInput.value = totalIva.toFixed(2);
-                totalInput.value = total.toFixed(2);
-            }
-
-            // Escuchar cambios en los checkboxes de productos
-            productCheckboxes.forEach(function(checkbox) {
-                checkbox.addEventListener('change', calcularSubtotalYTotalIva);
+                    subtotal += productPrice * quantity; // Multiplicación del precio por la cantidad
+                }
             });
 
-            // Calcular subtotal y total de IVA al cargar la página
-            calcularSubtotalYTotalIva();
+            // Calcular total de IVA (16%)
+            const ivaRate = 0.16;
+            const totalIva = subtotal * ivaRate;
+
+            // Calcular total (subtotal + total de IVA)
+            const total = subtotal + totalIva;
+
+            // Actualizar valores en los inputs
+            subtotalInput.value = subtotal.toFixed(2);
+            totalIvaInput.value = totalIva.toFixed(2);
+            totalInput.value = total.toFixed(2);
+        }
+
+        // Escuchar cambios en los checkboxes de productos y en las cantidades
+        productCheckboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', calcularSubtotalYTotalIva);
         });
-    </script>
+        cantidadInputs.forEach(function(input) {
+            input.addEventListener('input', calcularSubtotalYTotalIva);
+        });
+
+        // Calcular subtotal y total de IVA al cargar la página
+        calcularSubtotalYTotalIva();
+    });
+</script>
+
 </x-app-layout>

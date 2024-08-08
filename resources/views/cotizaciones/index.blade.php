@@ -38,6 +38,9 @@
                     <td class="border border-gray-200 px-2 py-2">{{ $cotizacion->iva }}</td>
                     <td class="border border-gray-200 px-2 py-2">{{ $cotizacion->total }}</td>
                     <td class="border border-gray-200 px-2 py-2">
+                        <a href="{{ route('cotizaciones.reporte.pdf', $cotizacion->id) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded inline-block">
+                            Descargar PDF
+                        </a>
                         <a href="{{ route('cotizaciones.show', $cotizacion->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block">Mostrar</a>
                         <a href="{{ route('cotizaciones.edit', $cotizacion->id) }}" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded inline-block">Editar</a>
                         <form action="{{ route('cotizaciones.destroy', $cotizacion->id) }}" method="POST" class="inline-block" onsubmit="return confirm('{{ __('¿Estás seguro de que quieres eliminar esta cotización?') }}');">

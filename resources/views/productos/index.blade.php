@@ -27,6 +27,7 @@
                     <th class="border border-gray-200 px-2 py-3">Precio Venta</th>
                     <th class="border border-gray-200 px-2 py-3">Precio Compra</th>
                     <th class="border border-gray-200 px-2 py-2">Fecha de Compra</th>
+                    <th class="border border-gray-200 px-2 py-2">Cantidad</th>
                     <th class="border border-gray-200 px-2 py-2">Acciones</th>
                 </tr>
             </thead>
@@ -39,6 +40,7 @@
                     <td class="border border-gray-200 px-2 py-2">{{ $producto->PV }}</td>
                     <td class="border border-gray-200 px-2 py-2">{{ $producto->PC }}</td>
                     <td class="border border-gray-200 px-2 py-2">{{ $producto->Fecha_de_compra }}</td>
+                    <td class="border border-gray-200 px-2 py-2">{{ $producto->cantidad }}</td>
                     <td class="border border-gray-200 px-2 py-2">
                         <a href="{{ route('productos.show', $producto->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block">Mostrar</a>
                         <a href="{{ route('productos.edit', $producto->id) }}" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded inline-block">Editar</a>

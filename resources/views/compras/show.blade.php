@@ -7,27 +7,23 @@
         <div class="max-w-xl bg-white p-6 rounded-lg shadow-md">
             <div class="mb-4">
                 <label for="proveedor" class="block text-sm font-medium text-gray-700">Proveedor</label>
-                <input type="text" name="proveedor" id="proveedor" value="{{ $compra->proveedor->nombre }}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" readonly>
-            </div>
-
-            <div class="mb-4">
-                <label for="producto" class="block text-sm font-medium text-gray-700">Producto</label>
-                <input type="text" name="producto" id="producto" value="{{ $compra->producto->nombre }}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" readonly>
+                <input type="text" name="proveedor" id="proveedor" value="{{ $compra->proveedor->nombre ?? 'No disponible' }}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" readonly>
             </div>
 
             <div class="mb-4">
                 <label for="Fecha_de_compra" class="block text-sm font-medium text-gray-700">Fecha de Compra</label>
-                <input type="text" name="Fecha_de_compra" id="Fecha_de_compra" value="{{ $compra->Fecha_de_compra}}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" readonly>
+                <input type="text" name="Fecha_de_compra" id="Fecha_de_compra" value="{{ $compra->Fecha_de_compra }}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" readonly>
             </div>
 
             <div class="mb-4">
-                <label for="precio" class="block text-sm font-medium text-gray-700">Precio</label>
-                <input type="text" name="precio" id="precio" value="{{ $compra->precio }}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" readonly>
-            </div>
-
-            <div class="mb-4">
-                <label for="cantidad" class="block text-sm font-medium text-gray-700">Cantidad</label>
-                <input type="text" name="cantidad" id="cantidad" value="{{ $compra->cantidad }}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" readonly>
+                <label for="productos" class="block text-sm font-medium text-gray-700">Productos</label>
+                <ul class="mt-1">
+                    @foreach ($compra->productos as $producto)
+                        <li class="mb-1">
+                            {{ $producto->nombre }} - Cantidad: {{ $producto->pivot->cantidad }}
+                        </li>
+                    @endforeach
+                </ul>
             </div>
 
             <div class="mb-4">

@@ -23,11 +23,11 @@ class Cotizacion extends Model
     
 
     public function productos()
-{
-    return $this->belongsToMany(Producto::class, 'cotizacion_producto', 'cotizacion_id', 'producto_id')
-        ->withTimestamps();
-}
-
+    {
+        return $this->belongsToMany(Producto::class, 'cotizacion_producto', 'cotizacion_id', 'producto_id')
+            ->withPivot('cantidad', 'precio') 
+            ->withTimestamps(); 
+    }
     // Relación con el cliente
     public function cliente()
     {

@@ -42,6 +42,7 @@
                     <td class="border border-gray-200 px-2 py-2">{{ $compra->total }}</td>
                     <td class="border border-gray-200 px-2 py-2">{{ $compra->descuento }}</td>
                     <td class="border border-gray-200 px-2 py-2">
+                        <a href="{{ route('compras.reporte', $compra->id) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-block">Descargar Reporte PDF</a>
                         <a href="{{ route('compras.show', $compra->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block">Mostrar</a>
                         <a href="{{ route('compras.edit', $compra->id) }}" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded inline-block">Editar</a>
                         <form action="{{ route('compras.destroy', $compra->id) }}" method="POST" class="inline-block">

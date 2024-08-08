@@ -12,6 +12,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('cotizacion_id');
             $table->unsignedBigInteger('producto_id');
+            $table->integer('cantidad');
+            $table->decimal('precio', 10, 2); // Ajusta la precisión según tus necesidades
             $table->timestamps();
 
             // Definir las claves foráneas

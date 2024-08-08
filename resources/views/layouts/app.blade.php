@@ -10,6 +10,10 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -65,6 +69,11 @@
                     <x-nav-link :href="route('ventas.index')" :active="request()->routeIs('ventas.*')">
                         {{ __('Ventas') }}  
                     </x-nav-link>
+
+                    <x-nav-link :href="route('reportes.index')" :active="request()->routeIs('reportes.*')">
+                        {{ __('Reportes') }}
+                    </x-nav-link>
+                    
 
                 </div>
             </nav>

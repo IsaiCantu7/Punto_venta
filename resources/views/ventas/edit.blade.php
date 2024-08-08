@@ -89,7 +89,7 @@
             descuentoInput.addEventListener('input', calculateCambio);
             efectivoInput.addEventListener('input', calculateCambio);
 
-            calculateCambio(); // Calcula el cambio inicial al cargar la página
+            calculateCambio(); // Calcular el cambio inicial al cargar la página
         });
     </script>
 </x-app-layout>
