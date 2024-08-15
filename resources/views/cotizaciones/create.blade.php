@@ -69,7 +69,7 @@
                 @foreach($productos as $producto)
                     <div class="producto-item flex items-center mb-2">
                         <input type="checkbox" name="products[]" value="{{ $producto->id }}" data-price="{{ $producto->PC }}" class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out">
-                        <span class="ml-2 text-gray-700">{{ $producto->nombre }} - ${{ number_format($producto->PC, 2) }}</span>
+                        <span class="ml-2 text-gray-700">{{ $producto->nombre }} - ${{ number_format($producto->PV, 2) }}</span>
                         <input type="number" name="cantidad[]" value="1" min="1" class="ml-2 w-16 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
                 @endforeach
@@ -151,6 +151,7 @@
 </script>
 
 <script>
+    // Filtrar productos por nombre
     document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('producto_search');
     const productoItems = document.querySelectorAll('.producto-item');

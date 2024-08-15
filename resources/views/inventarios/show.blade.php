@@ -45,12 +45,6 @@
 
             <div class="flex justify-end">
                 <a href="{{ route('inventarios.index') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-block">Volver</a>
-                <a href="{{ route('inventarios.edit', $inventario->id) }}" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 ml-2 rounded inline-block">Editar</a>
-                <form action="{{ route('inventarios.destroy', $inventario->id) }}" method="POST" class="ml-2">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded inline-block">Eliminar</button>
-                </form>
             </div>
         </div>
     </div>

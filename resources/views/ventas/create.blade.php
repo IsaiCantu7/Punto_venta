@@ -32,7 +32,6 @@
                 @enderror
             </div>
 
-            <!-- Buscador de productos -->
             <div class="mb-4">
                 <label for="product_search" class="block text-sm font-medium text-gray-700">Buscar Productos</label>
                 <input type="text" id="product_search" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Buscar...">
@@ -101,7 +100,7 @@
             const cambioInput = document.getElementById('cambio');
             const totalInput = document.getElementById('total');
             const ivaInput = document.getElementById('iva');
-
+            // Calcula los totales de la venta
             function calculateTotals() {
                 let subtotal = 0;
                 checkboxInputs.forEach(checkbox => {
@@ -121,7 +120,7 @@
                 ivaInput.value = iva.toFixed(2);
                 calculateCambio();
             }
-
+            // Calcula el cambio de la venta
             function calculateCambio() {
                 const total = parseFloat(totalInput.value) || 0;
                 const efectivo = parseFloat(efectivoInput.value) || 0;
@@ -129,7 +128,7 @@
 
                 cambioInput.value = cambio.toFixed(2);
             }
-
+            // Escucha los cambios en los inputs y checkboxes
             checkboxInputs.forEach(checkbox => {
                 checkbox.addEventListener('change', calculateTotals);
             });
@@ -156,7 +155,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const productSearch = document.getElementById('product_search');
             const productList = document.getElementById('product_list');
-
+            // Filtra los productos por nombre
             productSearch.addEventListener('input', function () {
                 const search = productSearch.value.toLowerCase();
                 const items = productList.querySelectorAll('.producto-item');

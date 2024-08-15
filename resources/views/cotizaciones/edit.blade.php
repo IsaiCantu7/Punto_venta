@@ -65,7 +65,7 @@
                 @foreach($productos as $producto)
                     <div class="flex items-center mb-2">
                         <input type="checkbox" name="products[]" value="{{ $producto->id }}" {{ in_array($producto->id, $cotizacion->productos->pluck('id')->toArray()) ? 'checked' : '' }} data-price="{{ $producto->PC }}" class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out">
-                        <span class="ml-2 text-gray-700">{{ $producto->nombre }} - ${{ number_format($producto->PC, 2) }}</span>
+                        <span class="ml-2 text-gray-700">{{ $producto->nombre }} - ${{ number_format($producto->PV, 2) }}</span>
                     </div>
                 @endforeach
                 @error('products')

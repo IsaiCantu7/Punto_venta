@@ -30,7 +30,7 @@
                 <p class="block text-sm font-medium text-gray-700">Productos:</p>
                 <ul class="list-disc ml-6">
                     @foreach($cotizacion->productos as $producto)
-                        <li>{{ $producto->nombre }} - ${{ number_format($producto->PC, 2) }}</li>
+                        <li>{{ $producto->nombre }} - ${{ number_format($producto->PV, 2) }}</li>
                     @endforeach
                 </ul>
             </div>

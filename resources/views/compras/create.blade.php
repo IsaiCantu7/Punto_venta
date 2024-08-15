@@ -77,8 +77,7 @@
                             document.querySelector(`input[name="productos[${key}][cantidad]"]`).value = selectedProducts[key].cantidad;
                             document.querySelector(`input[name="productos[${key}][precio]"]`).value = selectedProducts[key].precio;
                         });
-
-                        // Asegúrate de que no se envíen productos no seleccionados
+                        // Eliminar productos no seleccionados
                         const productosInputs = document.querySelectorAll('input[name^="productos"]');
                         productosInputs.forEach(input => {
                             if (!input.value && !input.name.includes('cantidad')) {

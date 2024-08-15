@@ -15,7 +15,7 @@ class Vendedor extends Model
         'correo',
         'telefono'
     ];
-
+    // Relación uno a muchos con la tabla de cotizaciones
     public function cotizaciones() {
         return $this->hasMany(Cotizacion::class, 'id_vendedor');
     }

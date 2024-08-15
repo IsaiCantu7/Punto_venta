@@ -53,9 +53,9 @@ public function store(Request $request)
         'vigencia' => 'required|date',
         'comentarios' => 'nullable|string',
         'products' => 'required|array',
-        'products.*' => 'exists:productos,id', // Validar que cada ID de producto exista en la tabla productos
-        'quantities.*' => 'required|numeric|min:1', // Validar que cada cantidad sea numérica y mayor o igual a 1
-        'prices.*' => 'required|numeric|min:0', // Validar que cada precio sea numérico y mayor o igual a 0
+        'products.*' => 'exists:productos,id',
+        'quantities.*' => 'required|numeric|min:1',
+        'prices.*' => 'required|numeric|min:0',
     ]);
 
     try {
@@ -78,7 +78,7 @@ public function store(Request $request)
             $producto = Producto::find($producto_id);
             if ($producto) {
                 $cantidad = $request->input("quantities.{$index}", 1);
-                $precio_unitario = $request->input("prices.{$index}", $producto->PC); // Usar el precio enviado o el precio del producto
+                $precio_unitario = $request->input("prices.{$index}", $producto->PV);
 
                 // Adjuntar el producto a la cotización
                 $cotizacion->productos()->attach($producto_id, [

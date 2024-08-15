@@ -7,38 +7,32 @@
         <form action="{{ route('inventarios.store') }}" method="POST" class="max-w-xl bg-white p-6 rounded-lg shadow-md">
             @csrf
 
-            <!-- Selección de producto -->
             <div class="mb-4">
                 <label for="producto_buscador" class="block text-sm font-medium text-gray-700">Buscar Producto</label>
                 <input type="text" id="producto_buscador" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Buscar producto...">
                 <select name="producto_id" id="producto_id" class="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
                     <option value="">Selecciona un producto</option>
-                    <!-- Las opciones se muestran dinámicamente después de buscar -->
                 </select>
             </div>
 
-            <!-- Campo oculto de categoría -->
             <input type="hidden" name="categoria_id" id="categoria_id">
 
-            <!-- Fecha de entrada -->
             <div class="mb-4">
                 <label for="fecha_de_entrada" class="block text-sm font-medium text-gray-700">Fecha de Entrada</label>
                 <input type="date" name="fecha_de_entrada" id="fecha_de_entrada" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
             </div>
 
-            <!-- Fecha de salida -->
+
             <div class="mb-4">
                 <label for="fecha_de_salida" class="block text-sm font-medium text-gray-700">Fecha de Salida</label>
                 <input type="date" name="fecha_de_salida" id="fecha_de_salida" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
             </div>
 
-            <!-- Motivo -->
             <div class="mb-4">
                 <label for="motivo" class="block text-sm font-medium text-gray-700">Motivo</label>
                 <input type="text" name="motivo" id="motivo" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
             </div>
 
-            <!-- Movimiento -->
             <div class="mb-4">
                 <label for="movimiento" class="block text-sm font-medium text-gray-700">Movimiento</label>
                 <select name="movimiento" id="movimiento" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
@@ -48,7 +42,6 @@
                 </select>
             </div>
 
-            <!-- Cantidad -->
             <div class="mb-4">
                 <label for="cantidad" class="block text-sm font-medium text-gray-700">Cantidad</label>
                 <input type="number" value="1" min="1" name="cantidad" id="cantidad" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
