@@ -54,7 +54,7 @@ class ReporteController extends Controller
                 ];
             });
     
-        // Obtener detalles de ventas con el total calculado a partir de la tabla 
+        // Obtener detalles de ventas con el total calculado a partir de la tabla pivote
         $detallesVentas = Venta::select('ventas.id', 'ventas.Fecha_de_venta', DB::raw('SUM(venta_producto.cantidad * venta_producto.precio_unitario) as total'))
             ->join('venta_producto', 'ventas.id', '=', 'venta_producto.venta_id')
             ->whereBetween('ventas.Fecha_de_venta', [$fechaInicio, $fechaFin])

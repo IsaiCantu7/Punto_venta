@@ -37,7 +37,7 @@
 
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">Total</label>
-                <p class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">${{ $venta->total }}</p>
+                <p class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">${{ $venta->precio_total }}</p>
             </div>
 
             <div class="mb-4">

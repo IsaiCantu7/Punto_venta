@@ -77,7 +77,15 @@
                     <td>{{ $inventario->fecha_de_entrada }}</td>
                     <td>{{ $inventario->fecha_de_salida }}</td>
                     <td>{{ $inventario->motivo }}</td>
-                    <td>{{ $inventario->movimiento }}</td>
+                    <td>
+                        @if($inventario->movimiento === 'entry')
+                            Entrada
+                        @elseif($inventario->movimiento === 'exit')
+                            Salida
+                        @else
+                            {{ $inventario->movimiento }}
+                        @endif
+                    </td>
                     <td>{{ $inventario->cantidad }}</td>
                 </tr>
             </tbody>

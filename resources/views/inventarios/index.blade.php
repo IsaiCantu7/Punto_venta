@@ -30,7 +30,15 @@
                             <td class="border border-gray-200 px-2 py-2">{{ $inventario->fecha_de_entrada }}</td>
                             <td class="border border-gray-200 px-2 py-2">{{ $inventario->fecha_de_salida }}</td>
                             <td class="border border-gray-200 px-2 py-2">{{ $inventario->motivo }}</td>
-                            <td class="border border-gray-200 px-2 py-2">{{ $inventario->movimiento }}</td>
+                            <td>
+                                @if($inventario->movimiento === 'entry')
+                                    Entrada
+                                @elseif($inventario->movimiento === 'exit')
+                                    Salida
+                                @else
+                                    {{ $inventario->movimiento }}
+                                @endif
+                            </td>   
                             <td class="border border-gray-200 px-2 py-2">{{ $inventario->cantidad }}</td>
                             <td class="py-2 px-2 text-center">
                                 <div class="flex item-center justify-center space-x-2">

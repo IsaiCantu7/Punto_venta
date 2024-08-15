@@ -44,8 +44,8 @@
                 <label for="movimiento" class="block text-sm font-medium text-gray-700">Movimiento</label>
                 <select name="movimiento" id="movimiento" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
                     <option value="">Selecciona un movimiento</option>
-                    <option value="entry" {{ $inventario->movimiento === 'entry' ? 'selected' : '' }}>Entry</option>
-                    <option value="exit" {{ $inventario->movimiento === 'exit' ? 'selected' : '' }}>Exit</option>
+                    <option value="entry" {{ $inventario->movimiento === 'entry' ? 'selected' : '' }}>Entrada</option>
+                    <option value="exit" {{ $inventario->movimiento === 'exit' ? 'selected' : '' }}>Salida</option>
                 </select>
             </div>
 

@@ -39,7 +39,7 @@
                         <div class="flex items-center mb-2 producto-item">
                             <input type="checkbox" name="productos[{{ $producto->id }}][id]" value="{{ $producto->id }}" id="producto-{{ $producto->id }}" class="mr-2 producto-checkbox" onchange="toggleProduct(this, '{{ $producto->id }}')">
                             <label for="producto-{{ $producto->id }}" class="mr-2">{{ $producto->nombre }}</label>
-                            <input type="number" name="productos[{{ $producto->id }}][cantidad]" value="0" class="cantidad-input mr-2 block w-20 px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" data-precio="{{ $producto->PV }}" data-id="{{ $producto->id }}" min="0">
+                            <input type="number" value="1" min="1" name="productos[{{ $producto->id }}][cantidad]" class="cantidad-input mr-2 block w-20 px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" data-precio="{{ $producto->PV }}" data-id="{{ $producto->id }}" min="0">
                             <input type="number" step="0.01" name="productos[{{ $producto->id }}][precio]" value="{{ $producto->PV }}" placeholder="Precio" readonly class="block w-20 px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-gray-100">
                         </div>
                     @endforeach

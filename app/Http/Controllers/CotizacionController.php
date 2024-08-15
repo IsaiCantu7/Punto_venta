@@ -86,7 +86,7 @@ public function store(Request $request)
                     'precio' => $precio_unitario,
                 ]);
 
-                // 
+                // Debugging message
                 Log::info("Producto {$producto_id} adjuntado a la cotización {$cotizacion->id} con cantidad {$cantidad} y precio {$precio_unitario}");
             }
         }
@@ -176,7 +176,7 @@ public function store(Request $request)
         // Buscar la cotización a eliminar
         $cotizacion = Cotizacion::findOrFail($id);
 
-        // Eliminar la relación con los productos 
+        // Eliminar la relación con los productos en la tabla pivote
         $cotizacion->productos()->detach();
 
         // Eliminar la cotización

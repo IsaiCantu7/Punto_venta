@@ -34,6 +34,12 @@ class InventarioController extends Controller
      */
     public function store(Request $request)
     {
+        $producto = Producto::findOrFail($request->input('producto_id'));
+        $categoriaId = $producto->categoria_id;
+    
+        // Adjuntar la categoría a la solicitud antes de la validación
+        $request->merge(['categoria_id' => $categoriaId]);
+
         // Validar los datos del formulario
         $request->validate([
             'producto_id' => 'required',
@@ -97,6 +103,12 @@ class InventarioController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $producto = Producto::findOrFail($request->input('producto_id'));
+        $categoriaId = $producto->categoria_id;
+    
+        // Adjuntar la categoría a la solicitud antes de la validación
+        $request->merge(['categoria_id' => $categoriaId]);
+        
         // Validar los datos del formulario
         $request->validate([
             'producto_id' => 'required',

@@ -32,15 +32,23 @@
                 @enderror
             </div>
 
+            <!-- Buscador de productos -->
+            <div class="mb-4">
+                <label for="product_search" class="block text-sm font-medium text-gray-700">Buscar Productos</label>
+                <input type="text" id="product_search" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Buscar...">
+            </div>
+
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">Productos</label>
-                @foreach ($productos as $producto)
-                    <div class="flex items-center mb-2">
-                        <input type="checkbox" name="productos[]" id="producto_{{ $producto->id }}" value="{{ $producto->id }}" class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out">
-                        <label for="producto_{{ $producto->id }}" class="ml-2 block text-sm leading-5 text-gray-900">{{ $producto->nombre }} - ${{ $producto->PV }}</label>
-                        <input type="number" name="cantidad_{{ $producto->id }}" id="cantidad_{{ $producto->id }}" value="1" min="1" class="ml-2 block w-24 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm cantidad-input">
-                    </div>
-                @endforeach
+                <div id="product_list">
+                    @foreach ($productos as $producto)
+                        <div class="flex items-center mb-2 producto-item">
+                            <input type="checkbox" name="productos[]" id="producto_{{ $producto->id }}" value="{{ $producto->id }}" class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out">
+                            <label for="producto_{{ $producto->id }}" class="ml-2 block text-sm leading-5 text-gray-900">{{ $producto->nombre }} - ${{ $producto->PV }}</label>
+                            <input type="number" name="cantidad_{{ $producto->id }}" id="cantidad_{{ $producto->id }}" value="1" min="1" class="ml-2 block w-24 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm cantidad-input">
+                        </div>
+                    @endforeach
+                </div>
                 @error('productos')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
@@ -141,6 +149,27 @@
 
             calculateTotals(); // Calcula el total inicial al cargar la página
             calculateCambio(); // Calcula el cambio inicial al cargar la página
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const productSearch = document.getElementById('product_search');
+            const productList = document.getElementById('product_list');
+
+            productSearch.addEventListener('input', function () {
+                const search = productSearch.value.toLowerCase();
+                const items = productList.querySelectorAll('.producto-item');
+
+                items.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(search)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
         });
     </script>
 </x-app-layout>

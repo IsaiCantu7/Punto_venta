@@ -60,9 +60,14 @@
             </div>
 
             <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">Buscar Productos</label>
+                <input type="text" id="producto_search" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Buscar productos...">
+            </div>
+
+            <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">Productos</label>
                 @foreach($productos as $producto)
-                    <div class="flex items-center mb-2">
+                    <div class="producto-item flex items-center mb-2">
                         <input type="checkbox" name="products[]" value="{{ $producto->id }}" data-price="{{ $producto->PC }}" class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out">
                         <span class="ml-2 text-gray-700">{{ $producto->nombre }} - ${{ number_format($producto->PC, 2) }}</span>
                         <input type="number" name="cantidad[]" value="1" min="1" class="ml-2 w-16 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
@@ -72,6 +77,7 @@
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>
+
 
             <div class="mb-4">
                 <label for="subtotal" class="block text-sm font-medium text-gray-700">Subtotal</label>
@@ -144,4 +150,23 @@
     });
 </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('producto_search');
+    const productoItems = document.querySelectorAll('.producto-item');
+
+    searchInput.addEventListener('input', function () {
+        const searchTerm = searchInput.value.toLowerCase();
+
+        productoItems.forEach(item => {
+            const productoName = item.querySelector('span').textContent.toLowerCase();
+            if (productoName.includes(searchTerm)) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
 </x-app-layout>

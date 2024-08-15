@@ -48,15 +48,16 @@ class VentaController extends Controller
             'productos.*' => 'exists:productos,id',
             'descuento' => 'nullable|numeric|min:0',
             'efectivo' => 'required|numeric|min:0',
+            'total' => 'required|numeric|min:0',
             'cambio' => 'required|numeric|min:0',
         ]);
-    
         try {
             DB::beginTransaction();
     
             // Crear la venta
             $venta = new Venta();
             $venta->cliente_id = $request->cliente_id;
+            $venta->precio_total = $request->total ?? 0;
             $venta->Fecha_de_venta = now();
             $venta->precio_total = $request->total ?? 0;
             $venta->descuento = $request->descuento ?? 0;
@@ -64,29 +65,24 @@ class VentaController extends Controller
             $venta->cambio = $request->cambio;
             $venta->iva = $request->iva ?? 0;
             $venta->save();
-    
             // Procesar cada producto
             foreach ($request->productos as $producto_id) {
                 $producto = Producto::find($producto_id);
                 if ($producto) {
                     $cantidad = $request->input("cantidad_{$producto_id}", 1);
-                    $precio_unitario = $producto->PV; // Usar el precio de venta (PV)
-    
+                    $precio_unitario = $producto->PV;
                     // Verificar stock en inventario
-                    $inventario = Inventario::where('producto_id', $producto_id)->first();
+                    $inventario = Producto::where('id', $producto_id)->first();
                     if ($inventario && $inventario->cantidad >= $cantidad) {
                         // Reducir el stock en inventario
-                        $producto->cantidad -= $cantidad;
-                        $producto->save();
+                        $inventario->cantidad -= $cantidad;
+                        $inventario->save();
     
                         // Adjuntar el producto a la venta
                         $venta->productos()->attach($producto_id, [
                             'cantidad' => $cantidad,
                             'precio_unitario' => $precio_unitario,
                         ]);
-    
-                        // Debugging message
-                        Log::info("Producto {$producto_id} adjuntado a la venta {$venta->id} con cantidad {$cantidad} y precio unitario {$precio_unitario}");
                     } else {
                         throw new \Exception("No hay suficiente stock para el producto {$producto->nombre}.");
                     }
@@ -98,8 +94,6 @@ class VentaController extends Controller
             return redirect()->route('ventas.index')->with('success', 'Venta creada correctamente.');
         } catch (\Exception $e) {
             DB::rollback();
-            // Logging the error
-            Log::error('Error al crear la venta: ' . $e->getMessage());
             return redirect()->back()->withInput()->with('error', 'Error al crear la venta: ' . $e->getMessage());
         }
     }
@@ -146,62 +140,77 @@ class VentaController extends Controller
      */
     public function update(Request $request, Venta $venta)
     {
-        // Validación de los datos del formulario
         $request->validate([
             'cliente_id' => 'required|exists:clientes,id',
-            'descuento' => 'nullable|numeric|min:0',
             'productos' => 'required|array',
             'productos.*' => 'exists:productos,id',
+            'descuento' => 'nullable|numeric|min:0',
             'efectivo' => 'required|numeric|min:0',
+            'total' => 'required|numeric|min:0',
             'cambio' => 'required|numeric|min:0',
         ]);
-
+        
         try {
             DB::beginTransaction();
-
-            // Actualizar la venta con los datos proporcionados
-            $venta->update([
-                'cliente_id' => $request->cliente_id,
-                'descuento' => $request->descuento ?? 0,
-                'efectivo' => $request->efectivo,
-                'cambio' => $request->cambio,
-            ]);
-
-            // Actualizar los productos asociados a la venta
-            $venta->productos()->detach(); // Eliminar los productos actuales asociados a la venta
-
+    
+            // Actualizar la venta existente
+            $venta->cliente_id = $request->cliente_id;
+            $venta->precio_total = $request->total ?? 0;
+            $venta->descuento = $request->descuento ?? 0;
+            $venta->efectivo = $request->efectivo;
+            $venta->cambio = $request->cambio;
+            $venta->iva = $request->iva ?? 0;
+            $venta->save();
+    
+            // Obtener los productos asociados a la venta antes de la actualización
+            $productosAnteriores = $venta->productos;
+    
+            // Eliminar las asociaciones anteriores
+            $venta->productos()->detach();
+    
+            // Procesar cada producto nuevo
             foreach ($request->productos as $producto_id) {
-                $cantidad = $request->input("cantidad_{$producto_id}", 1); // Obtener la cantidad del formulario
-                $precio_unitario = $request->input("precio_{$producto_id}", 0); // Obtener el precio unitario del formulario
-
-                // Verificar stock disponible
                 $producto = Producto::find($producto_id);
                 if ($producto) {
-                    if ($producto->stock >= $cantidad) {
-                        // Reducir el stock del producto
-                        $producto->stock -= $cantidad;
-                        $producto->save();
-
-                        // Adjuntar el producto a la venta con la cantidad y precio_unitario
+                    $cantidad = $request->input("cantidad_{$producto_id}", 1);
+                    $precio_unitario = $producto->PV;
+    
+                    // Verificar stock en inventario
+                    $inventario = Producto::where('id', $producto_id)->first();
+                    if ($inventario && $inventario->cantidad >= $cantidad) {
+                        // Reducir el stock en inventario
+                        $inventario->cantidad -= $cantidad;
+                        $inventario->save();
+    
+                        // Adjuntar el producto a la venta
                         $venta->productos()->attach($producto_id, [
                             'cantidad' => $cantidad,
                             'precio_unitario' => $precio_unitario,
                         ]);
                     } else {
-                        // Si no hay suficiente stock, lanzar una excepción
                         throw new \Exception("No hay suficiente stock para el producto {$producto->nombre}.");
                     }
                 }
             }
-
+    
+            // Restaurar el inventario para los productos anteriores
+            foreach ($productosAnteriores as $productoAnterior) {
+                $inventario = Producto::where('id', $productoAnterior->id)->first();
+                if ($inventario) {
+                    $inventario->cantidad += $productoAnterior->pivot->cantidad;
+                    $inventario->save();
+                }
+            }
+    
             DB::commit();
-
+    
             return redirect()->route('ventas.index')->with('success', 'Venta actualizada correctamente.');
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->withInput()->with('error', 'Error al actualizar la venta: ' . $e->getMessage());
         }
     }
+    
 
     /**
      * Eliminar la venta especificada del almacenamiento.
